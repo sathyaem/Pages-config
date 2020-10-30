@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: pages
+    namespace: student-name
+data:
+  application.yml: |-
+    bean.content: Yellow Pages from config!

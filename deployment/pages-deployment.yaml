@@ -5,7 +5,7 @@ metadata:
     app: pages
     tier: service
   name: pages
-  namespace: [student-name]
+  namespace: student-name
 spec:
   replicas: 1
   selector:
@@ -20,16 +20,16 @@ spec:
         tier: service
     spec:
       containers:
-        - image: [docker-name]/pages:monitor
+        - image: sathiasara/pages:d2
           name: pages
           ports:
             - containerPort: 8080
           env:
-            - name: PAGE_CONTENT
-              valueFrom:
-                configMapKeyRef:
-                  name: pages-config-map
-                  key: PAGE_CONTENT
+ #           - name: PAGE_CONTENT
+ #              valueFrom:
+ #               configMapKeyRef:
+ #                 name: pages-config-sck
+ #                 key: PAGES_CONTENT
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://pages-mysql/pages?allowPublicKeyRetrieval=true&useSSL=false
             - name: SPRING_DATASOURCE_USERNAME
@@ -42,7 +42,7 @@ spec:
             - name: DEBUG
               value: "true"
             - name: LOGGING_FILE_NAME
-              value: "[student-name]/logs/app.log"
+              value: "student-name/logs/app.log"
             - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB
               value: debug
             - name: LOGGING_LEVEL_ROOT
@@ -51,7 +51,9 @@ spec:
               value: "*"
           volumeMounts:
             - name: node-dir
-              mountPath: /[student-name]
+              mountPath: /student-name
+            - name: config-vol
+              mountPath: /config
           readinessProbe:
             tcpSocket:
               port: 8080
@@ -73,4 +75,10 @@ spec:
       volumes:
         - name: node-dir
           hostPath:
-            path: /[student-name]
+            path: /student-name
+        - name: config-vol
+          configMap:
+            name: pages
+            items:
+              - key: application.yml
+                path: application.yml
